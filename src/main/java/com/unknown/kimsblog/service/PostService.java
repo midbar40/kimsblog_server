@@ -24,6 +24,17 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    public Post updatePost(Long id, Post updatedPost) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        post.updatePost(updatedPost.getTitle(), updatedPost.getContent()); // ✨ 기존 메서드 활용
+        post.setUpdatedAt(java.time.LocalDateTime.now()); // ✨ 수정 시간 갱신
+
+        return postRepository.save(post);
+    }
+
+
     public Post getPostById(Long id) {
         Optional<Post> post = postRepository.findById(id);
         return post.orElseThrow(() -> new RuntimeException("Post not found"));

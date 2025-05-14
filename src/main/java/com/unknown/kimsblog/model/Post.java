@@ -5,6 +5,9 @@ package com.unknown.kimsblog.model;
 import jakarta.persistence.*;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Entity
 @Table(name = "posts") // ✨ 테이블명을 명확하게 지정
 public class Post {
@@ -18,9 +21,12 @@ public class Post {
     @Setter
     private String content;
 
-    @Column(name = "created_at", updatable = false, insertable = false ,nullable = false) // ✨ DB에 있는 `created_at` 컬럼과 매핑
+    @Column(name = "created_at", insertable = false, updatable = false, nullable = false) // ✨ DB에 있는 `created_at` 컬럼과 매핑
     private java.time.LocalDateTime createdAt;
 
+    @Column(name = "updated_at", insertable = false, updatable = false, nullable = false) // ✨ DB에 있는 `created_at` 컬럼과 매핑
+    @Setter
+    private LocalDateTime updatedAt;
 
     // 기본 생성자, 게터, 세터
     public Post() {
@@ -30,8 +36,14 @@ public class Post {
         this.title = title;
         this.content = content;
         this.createdAt = java.time.LocalDateTime.now(); // ✨ 생성 시 `created_at` 설정
+        this.updatedAt = java.time.LocalDateTime.now(); // 업데이트시 updated_at 설정
     }
 
+    public void updatePost(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.updatedAt = java.time.LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -46,4 +58,6 @@ public class Post {
     }
 
     public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+    public java.time.LocalDateTime getUpdatedAt() { return updatedAt; }
+
 }
