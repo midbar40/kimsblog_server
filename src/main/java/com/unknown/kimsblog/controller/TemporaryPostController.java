@@ -1,5 +1,6 @@
 package com.unknown.kimsblog.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.unknown.kimsblog.model.TemporaryPost;
 import com.unknown.kimsblog.service.TemporaryPostService;
@@ -28,6 +29,15 @@ public class TemporaryPostController {
     @GetMapping
     public Optional<TemporaryPost> getLatestTemporaryPost() {
         return temporaryPostService.getLatestTemporaryPost(); // ✅ 최신 글 반환
+    }
+
+    @PutMapping
+    public ResponseEntity<TemporaryPost> updateTemporaryPost(@RequestBody TemporaryPost post) {
+        // 하나의 임시 저장 글만 유지하는 정책: ID = 1로 고정
+        post.setId(1L);
+        // 서비스 계층을 통해 저장 (upsert 역할 수행)
+        TemporaryPost savedPost = temporaryPostService.saveTemporaryPost(post);
+        return ResponseEntity.ok(savedPost);
     }
 
     // ✅ 임시 저장 글 삭제

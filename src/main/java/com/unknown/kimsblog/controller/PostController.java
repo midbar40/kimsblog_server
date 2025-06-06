@@ -4,10 +4,13 @@ package com.unknown.kimsblog.controller;
 
 import com.unknown.kimsblog.model.Post;
 import com.unknown.kimsblog.service.PostService;
+import org.hibernate.sql.Delete;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.unknown.kimsblog.service.TemporaryPostService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -46,5 +49,14 @@ public class PostController {
     @PutMapping("/{id}")
     public Post updatePost(@PathVariable Long id, @RequestBody Post post) {
         return postService.updatePost(id, post); // ✅ 수정된 게시글 반환
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        postService.deletePostById(id);
+        return ResponseEntity.noContent()
+                .build();
+
     }
 }
