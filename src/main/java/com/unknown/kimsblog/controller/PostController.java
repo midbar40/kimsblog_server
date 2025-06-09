@@ -4,13 +4,18 @@ package com.unknown.kimsblog.controller;
 
 import com.unknown.kimsblog.model.Post;
 import com.unknown.kimsblog.service.PostService;
-import org.hibernate.sql.Delete;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.unknown.kimsblog.service.TemporaryPostService;
+import com.unknown.kimsblog.dto.PostCreateRequest;
+import com.unknown.kimsblog.dto.PostDto;
+import com.unknown.kimsblog.dto.PagedPostResponse;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -31,11 +36,40 @@ public class PostController {
         return postService.getAllPosts();
     }
 
+    // 게시글 페이지네이션 조회
+    @GetMapping("/paged")
+    public PagedPostResponse getPostsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Post> postPage = postService.getAllPostsPaged(pageable);
+
+        List<PostDto> postDtos = postPage.getContent()
+                .stream()
+                .map(PostDto::new)
+                .toList();
+
+        return new PagedPostResponse(
+                postDtos,
+                postPage.getNumber(),
+                postPage.getSize(),
+                postPage.getTotalPages(),
+                postPage.getTotalElements(),
+                postPage.isLast()
+        );
+    }
+
+
     // 게시글 작성
     @PostMapping
-    public Post createPost(@RequestBody Post post) {
-        Post savedPost = postService.createPost(post); // ✨ 일반 글 저장
-        temporaryPostService.deleteAllTemporaryPosts();// ✅ 임시 저장 삭제
+    public Post createPost(@RequestBody PostCreateRequest dto) {
+        System.out.println("Before saving: " + dto);
+        Post post = new Post();
+        post.setTitle(dto.getTitle());
+        post.setContent(dto.getContent());
+        Post savedPost = postService.createPost(post);
+        temporaryPostService.deleteAllTemporaryPosts();
         return savedPost;
     }
 
@@ -57,6 +91,5 @@ public class PostController {
         postService.deletePostById(id);
         return ResponseEntity.noContent()
                 .build();
-
     }
 }

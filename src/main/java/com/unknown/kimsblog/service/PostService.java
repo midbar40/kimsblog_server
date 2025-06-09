@@ -4,25 +4,45 @@ package com.unknown.kimsblog.service;
 
 import com.unknown.kimsblog.model.Post;
 import com.unknown.kimsblog.repository.PostRepository;
+import com.unknown.kimsblog.repository.TemporaryPostRepository;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+
 public class PostService {
 
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+    private final TemporaryPostRepository temporaryPostRepository;
 
     public List<Post> getAllPosts() {
         return postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
+    public Page<Post> getAllPostsPaged(Pageable pageable){
+        return postRepository.findAll(pageable);
+    }
+
+    @Transactional
     public Post createPost(Post post) {
         return postRepository.save(post);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void deleteAllTemporaryPosts() {
+        temporaryPostRepository.deleteAll(); // id=1 삭제
     }
 
     public Post updatePost(Long id, Post updatedPost) {

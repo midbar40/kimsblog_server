@@ -45,6 +45,4 @@ public class TemporaryPostController {
     public void deleteTemporaryPost() {
         temporaryPostService.deleteAllTemporaryPosts(); // ✅ 전체 삭제가 아니라 "현재 하나만 유지"하는 방식으로 유지
     }
-
-
 }
