@@ -27,6 +27,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// 스프링 시큐리티를 사용하긴 위한 스타터 추가
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	runtimeOnly 'com.h2database:h2'
+
+	// 스프링 시큐리티를 테스트하기 위한 의존성 추가
+	testImplementation 'org.springframework.security:spring-security-test'
+
 	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'  // JPA 3.x에 맞는 의존성
 	implementation 'io.github.cdimascio:dotenv-java:2.2.4' // env파일
 	compileOnly 'org.projectlombok:lombok'

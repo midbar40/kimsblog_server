@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "posts") // ✨ 테이블명을 명확하게 지정

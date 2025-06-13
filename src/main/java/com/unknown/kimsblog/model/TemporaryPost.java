@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class TemporaryPost {
     @Id
     private Long id = 1L; // id=1로 고정, 자동 증가 X
-
     private String title;
     private String content;
 

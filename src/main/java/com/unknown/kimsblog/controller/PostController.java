@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
-@CrossOrigin(origins = "http://localhost:5173")  // ✨ 특정 컨트롤러에 CORS 설정
+//@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})  // ✨ 특정 컨트롤러에 CORS 설정
 public class PostController {
 
     private final PostService postService;

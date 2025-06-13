@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/temp-posts")
-@CrossOrigin(origins = "http://localhost:5173")  // ✨ 특정 컨트롤러에 CORS 설정
+//@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})  // ✨ 특정 컨트롤러에 CORS 설정
 
 public class TemporaryPostController {
     private final TemporaryPostService temporaryPostService;
