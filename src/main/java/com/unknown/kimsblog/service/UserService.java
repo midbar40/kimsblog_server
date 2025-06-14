@@ -15,7 +15,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Long save(AddUserRequest dto){
-        System.out.println("Saving user with nickname: " + dto.getNickname());
+        System.out.println("Saving user with password: " + dto.getPassword());
 
         return userRepository.save(User.builder()
                 .email(dto.getEmail())
