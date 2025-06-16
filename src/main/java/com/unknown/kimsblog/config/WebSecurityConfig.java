@@ -79,13 +79,13 @@ public class WebSecurityConfig {
 
                         // 퀴즈 관련 API 권한 설정
                         // 퀴즈 조회는 모든 사용자에게 허용 (로그인 없이도 볼 수 있음)
-                        .requestMatchers(HttpMethod.GET, "/api/quiz", "/api/quiz/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/quiz/by-category").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/quiz/categories").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/quiz/random").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/quiz/popular").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/quiz/latest").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/quiz/*/play").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/quiz", "/api/quiz/**").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/quiz/by-category").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/quiz/categories").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/quiz/random").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/quiz/popular").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/quiz/latest").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/quiz/*/play").permitAll()
 
                         // 퀴즈 생성, 수정, 삭제, 답안 제출은 인증 필요
                         .requestMatchers(HttpMethod.POST, "/api/quiz").authenticated()
