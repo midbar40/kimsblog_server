@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+.env
+.env.local
+.env.production
+
+# 개발자별 설정
+docker-compose.override.yml

@@ -1,9 +1,10 @@
-// WebSecurityConfig.java (기존 파일 수정)
+// WebSecurityConfig.java (수정된 버전)
 package com.unknown.kimsblog.config;
 
 import com.unknown.kimsblog.service.UserDetailService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,21 +32,25 @@ public class WebSecurityConfig {
 
     private final UserDetailService userDetailService;
 
+    // 환경변수에서 프론트엔드 URL 주입
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // 세션 관리 설정
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(false)
-                        .and()
-                        .sessionFixation().migrateSession()
-                        .invalidSessionUrl("/api/auth/status")
-                )
+                // 세션 관리 설정 - .and() 제거하고 체이닝 방식으로 변경
+                .sessionManagement(session -> {
+                    session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                           .maximumSessions(1)
+                           .maxSessionsPreventsLogin(false)
+                           .sessionRegistry(null); // 필요시 SessionRegistry 설정
+                    session.sessionFixation().migrateSession()
+                           .invalidSessionUrl("/api/auth/status");
+                })
 
                 // SecurityContext를 세션에 저장하도록 명시적 설정
                 .securityContext(context -> context
@@ -154,11 +159,24 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("http://localhost:*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        
+        // 환경변수에서 받은 프론트엔드 URL 사용
+        // 개발환경에서는 localhost의 모든 포트, 운영환경에서는 정확한 도메인
+        if (frontendUrl.contains("localhost")) {
+            // 로컬 개발환경: localhost의 모든 포트 허용
+            config.setAllowedOriginPatterns(List.of("http://localhost:*", "https://localhost:*"));
+        } else {
+            // 운영환경: 정확한 도메인만 허용
+            config.setAllowedOrigins(List.of(frontendUrl));
+        }
+        
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
+        
+        // 노출할 헤더 설정 (필요시)
+        config.setExposedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
