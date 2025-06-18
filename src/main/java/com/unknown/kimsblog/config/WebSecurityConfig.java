@@ -160,8 +160,14 @@ public class WebSecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
+        // 디버깅용 로그 추가
+        System.out.println("=== CORS Configuration Debug ===");
+        System.out.println("FRONTEND_URL: " + frontendUrl);
+        System.out.println("VERCEL_PATTERN: " + vercelPattern);
+        System.out.println("GIT_PATTERN: " + gitPattern);
         
+        CorsConfiguration config = new CorsConfiguration();
+
         // 환경변수에서 받은 프론트엔드 URL 사용
         // 개발환경에서는 localhost의 모든 포트, 운영환경에서는 정확한 도메인
         if (frontendUrl.contains("localhost")) {
@@ -170,17 +176,16 @@ public class WebSecurityConfig {
         } else {
             // 운영환경: 정확한 도메인만 허용
             config.setAllowedOrigins(List.of(
-                frontendUrl,
-                vercelPattern,
-                gitPattern
-            ));
+                    frontendUrl,
+                    vercelPattern,
+                    gitPattern));
         }
-        
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
-        
+
         // 노출할 헤더 설정 (필요시)
         config.setExposedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
 
