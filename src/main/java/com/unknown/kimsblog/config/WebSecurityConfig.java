@@ -177,9 +177,9 @@ public class WebSecurityConfig {
         // 🎯 하드코딩된 허용 URL들 (환경변수 의존성 제거)
         config.setAllowedOrigins(Arrays.asList(
                 // Vercel 도메인들
-                "https://kimsblogfront.vercel.app",
-                "https://kimsblogfront-seunghyuns-projects-1b045e8e.vercel.app",
-                "https://kimsblogfront-git-main-seunghyuns-projects-1b045e8e.vercel.app",
+                "https://kimsblog.vercel.app",
+                "https://kimsblog-seunghyuns-projects-1b045e8e.vercel.app",
+                "https://kimsblog-git-main-seunghyuns-projects-1b045e8e.vercel.app",
 
                 // 개발환경
                 "http://localhost:3000",
@@ -189,8 +189,8 @@ public class WebSecurityConfig {
 
         // 🌟 추가로 패턴도 허용 (Vercel 자동 생성 URL 대응)
         config.setAllowedOriginPatterns(Arrays.asList(
-                "https://kimsblogfront-*.vercel.app",
-                "https://kimsblogfront-git-*.vercel.app"));
+                "https://kimsblog-*.vercel.app",
+                "https://kimsblog-git-*.vercel.app"));
 
         config.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
