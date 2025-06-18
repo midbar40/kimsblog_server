@@ -53,15 +53,6 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // ===========================================
-                        // 🌐 기본 웹 페이지 및 정적 리소스
-                        // ===========================================
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/index.html").permitAll()
-                        .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/robots.txt").permitAll()
-                        .requestMatchers("/sitemap.xml").permitAll()
-                        
-                        // ===========================================
                         // 🚨 공개 API - 인증 없이 접근 가능
                         // ===========================================
 
