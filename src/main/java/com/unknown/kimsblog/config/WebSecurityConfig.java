@@ -33,8 +33,14 @@ public class WebSecurityConfig {
     private final UserDetailService userDetailService;
 
     // 환경변수에서 프론트엔드 URL 주입
-    @Value("${app.frontend.url}")
+    @Value("${FRONTEND_URL}")
     private String frontendUrl;
+
+    @Value("${VERCEL_PATTERN}")
+    private String vercelPattern;
+
+    @Value("${GIT_PATTERN}")
+    private String gitPattern;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,17 +51,16 @@ public class WebSecurityConfig {
                 // 세션 관리 설정 - .and() 제거하고 체이닝 방식으로 변경
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                           .maximumSessions(1)
-                           .maxSessionsPreventsLogin(false)
-                           .sessionRegistry(null); // 필요시 SessionRegistry 설정
+                            .maximumSessions(1)
+                            .maxSessionsPreventsLogin(false)
+                            .sessionRegistry(null); // 필요시 SessionRegistry 설정
                     session.sessionFixation().migrateSession()
-                           .invalidSessionUrl("/api/auth/status");
+                            .invalidSessionUrl("/api/auth/status");
                 })
 
                 // SecurityContext를 세션에 저장하도록 명시적 설정
                 .securityContext(context -> context
-                        .securityContextRepository(securityContextRepository())
-                )
+                        .securityContextRepository(securityContextRepository()))
 
                 .authorizeHttpRequests(auth -> auth
                         // 정적 파일 및 기본 페이지
@@ -84,13 +89,13 @@ public class WebSecurityConfig {
 
                         // 퀴즈 관련 API 권한 설정
                         // 퀴즈 조회는 모든 사용자에게 허용 (로그인 없이도 볼 수 있음)
-//                        .requestMatchers(HttpMethod.GET, "/api/quiz", "/api/quiz/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/quiz/by-category").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/quiz/categories").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/quiz/random").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/quiz/popular").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/quiz/latest").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/quiz/*/play").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/quiz", "/api/quiz/**").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/quiz/by-category").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/quiz/categories").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/quiz/random").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/quiz/popular").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/quiz/latest").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/quiz/*/play").permitAll()
 
                         // 퀴즈 생성, 수정, 삭제, 답안 제출은 인증 필요
                         .requestMatchers(HttpMethod.POST, "/api/quiz").authenticated()
@@ -106,8 +111,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/stats/leaderboard/**").permitAll()
                         .requestMatchers("/api/stats/me").authenticated()
 
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
 
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -123,8 +127,7 @@ public class WebSecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .clearAuthentication(true)
-                        .permitAll()
-                )
+                        .permitAll())
 
                 // 예외 처리 핸들러
                 .exceptionHandling(exceptions -> exceptions
@@ -141,8 +144,7 @@ public class WebSecurityConfig {
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             response.getWriter().write("{\"error\":\"Access denied\"}");
                             response.setContentType("application/json");
-                        })
-                )
+                        }))
 
                 .build();
     }
@@ -167,7 +169,11 @@ public class WebSecurityConfig {
             config.setAllowedOriginPatterns(List.of("http://localhost:*", "https://localhost:*"));
         } else {
             // 운영환경: 정확한 도메인만 허용
-            config.setAllowedOrigins(List.of(frontendUrl));
+            config.setAllowedOrigins(List.of(
+                frontendUrl,
+                vercelPattern,
+                gitPattern
+            ));
         }
         
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
