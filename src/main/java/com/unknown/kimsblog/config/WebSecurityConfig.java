@@ -51,21 +51,31 @@ public class WebSecurityConfig {
                         .securityContextRepository(securityContextRepository()))
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // ===========================================
+                        // 🌐 기본 웹 페이지 및 정적 리소스
+                        // ===========================================
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/index.html").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
+                        .requestMatchers("/robots.txt").permitAll()
+                        .requestMatchers("/sitemap.xml").permitAll()
+                        
                         // ===========================================
                         // 🚨 공개 API - 인증 없이 접근 가능
                         // ===========================================
-                        
+
                         // 디버그 및 헬스체크
                         .requestMatchers("/api/debug/**").permitAll()
                         .requestMatchers("/api/health").permitAll()
-                        
+
                         // OPTIONS 요청 (CORS preflight) - 최우선
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        
+
                         // 정적 파일 및 기본 페이지
                         .requestMatchers("/static/**").permitAll()
                         .requestMatchers("/login", "/signup").permitAll()
-                        
+
                         // 인증 관련 API
                         .requestMatchers("/api/login", "/api/signup").permitAll()
                         .requestMatchers("/api/auth/status").permitAll()
@@ -81,7 +91,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/posts/paged").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
-                        
+
                         // 게시글 작성/수정/삭제는 인증 필요
                         .requestMatchers(HttpMethod.POST, "/api/posts").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/posts/**").authenticated()
@@ -100,7 +110,7 @@ public class WebSecurityConfig {
                         // ===========================================
                         .requestMatchers(HttpMethod.GET, "/api/quiz/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/quiz").permitAll()
-                        
+
                         // 퀴즈 생성, 수정, 삭제, 답안 제출은 인증 필요
                         .requestMatchers(HttpMethod.POST, "/api/quiz").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/quiz/**").authenticated()
@@ -170,46 +180,42 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         System.out.println("=== CORS Configuration (하드코딩 버전) ===");
-        
+
         CorsConfiguration config = new CorsConfiguration();
 
         // 🎯 하드코딩된 허용 URL들 (환경변수 의존성 제거)
         config.setAllowedOrigins(Arrays.asList(
-            // Vercel 도메인들
-            "https://kimsblogfront.vercel.app",
-            "https://kimsblogfront-seunghyuns-projects-1b045e8e.vercel.app",
-            "https://kimsblogfront-git-main-seunghyuns-projects-1b045e8e.vercel.app",
-            
-            // 개발환경
-            "http://localhost:3000",
-            "http://localhost:5173",
-            "http://127.0.0.1:3000",
-            "http://127.0.0.1:5173"
-        ));
+                // Vercel 도메인들
+                "https://kimsblogfront.vercel.app",
+                "https://kimsblogfront-seunghyuns-projects-1b045e8e.vercel.app",
+                "https://kimsblogfront-git-main-seunghyuns-projects-1b045e8e.vercel.app",
+
+                // 개발환경
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:5173"));
 
         // 🌟 추가로 패턴도 허용 (Vercel 자동 생성 URL 대응)
         config.setAllowedOriginPatterns(Arrays.asList(
-            "https://kimsblogfront-*.vercel.app",
-            "https://kimsblogfront-git-*.vercel.app"
-        ));
+                "https://kimsblogfront-*.vercel.app",
+                "https://kimsblogfront-git-*.vercel.app"));
 
         config.setAllowedMethods(Arrays.asList(
-            "GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"
-        ));
-        
+                "GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
+
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
         // 노출할 헤더 설정
         config.setExposedHeaders(Arrays.asList(
-            "Authorization", 
-            "Cache-Control", 
-            "Content-Type",
-            "Access-Control-Allow-Origin",
-            "Access-Control-Allow-Methods",
-            "Access-Control-Allow-Headers"
-        ));
+                "Authorization",
+                "Cache-Control",
+                "Content-Type",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Allow-Methods",
+                "Access-Control-Allow-Headers"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
