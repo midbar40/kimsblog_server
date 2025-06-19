@@ -127,7 +127,6 @@ public class WebSecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/api/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
-                            System.out.println("=== Logout Success Handler ===");
                             response.setStatus(HttpServletResponse.SC_OK);
                             response.getWriter().write("{\"message\":\"Logout successful\"}");
                             response.setContentType("application/json");
@@ -140,17 +139,11 @@ public class WebSecurityConfig {
                 // 예외 처리 핸들러
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
-                            System.out.println("=== Authentication Entry Point ===");
-                            System.out.println("Unauthorized access to: " + request.getRequestURI());
-                            System.out.println("Method: " + request.getMethod());
-                            System.out.println("Origin: " + request.getHeader("Origin"));
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.getWriter().write("{\"error\":\"Authentication required\"}");
                             response.setContentType("application/json");
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            System.out.println("=== Access Denied Handler ===");
-                            System.out.println("Access denied to: " + request.getRequestURI());
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             response.getWriter().write("{\"error\":\"Access denied\"}");
                             response.setContentType("application/json");
@@ -169,9 +162,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        System.out.println("=== CORS Configuration (하드코딩 버전) ===");
-
+    public CorsConfigurationSource corsConfigurationSource() {  
         CorsConfiguration config = new CorsConfiguration();
 
         // 🎯 하드코딩된 허용 URL들 (환경변수 의존성 제거)
@@ -211,12 +202,6 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
-        System.out.println("CORS 허용 Origin:");
-        System.out.println("- https://kimsblogfront.vercel.app");
-        System.out.println("- https://kimsblogfront-*.vercel.app");
-        System.out.println("- http://localhost:3000");
-        System.out.println("CORS 설정 완료!");
-
         return source;
     }
 
@@ -230,6 +215,6 @@ public class WebSecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
+        return new BCryptPasswordEncoder(10);
     }
 }
