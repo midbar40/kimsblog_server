@@ -1,4 +1,4 @@
-// WebSecurityConfig.java (완전한 버전 - 하드코딩)
+// WebSecurityConfig.java 
 package com.unknown.kimsblog.config;
 
 import com.unknown.kimsblog.service.UserDetailService;
@@ -55,17 +55,6 @@ public class WebSecurityConfig {
                         // OPTIONS 요청 (CORS preflight) - 최우선
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // 디버그 및 헬스체크
-                        .requestMatchers("/api/debug/**").permitAll()
-                        .requestMatchers("/api/health").permitAll()
-
-                        // OPTIONS 요청 (CORS preflight) - 최우선
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // 정적 파일 및 기본 페이지
-                        .requestMatchers("/static/**").permitAll()
-                        .requestMatchers("/login", "/signup").permitAll()
-
                         // 인증 관련 API
                         .requestMatchers("/api/login", "/api/signup").permitAll()
                         .requestMatchers("/api/auth/status").permitAll()
@@ -75,55 +64,57 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/password/**").permitAll()
                         .requestMatchers("/forgot-password", "/reset-password").permitAll()
 
-                        // ===========================================
-                        // 📝 게시글 관련 API
-                        // ===========================================
+                        // 게시글 관련 API
                         .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/paged").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
 
                         // 게시글 작성/수정/삭제는 ADMIN만
-                        .requestMatchers(HttpMethod.POST, "/api/posts").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/posts/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/posts").permitAll()
 
-                        // ===========================================
-                        // 💬 댓글 관련 API - 🔥 모든 요청 공개로 변경
-                        // ===========================================
+                        .requestMatchers(HttpMethod.PUT, "/api/posts/**").permitAll()
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").permitAll()
+
+
+                        // 댓글 관련 API
                         .requestMatchers(HttpMethod.GET, "/api/posts/*/comments").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/*/comments/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/posts/*/comments").permitAll() // 🔥 댓글 작성 공개
-                        .requestMatchers(HttpMethod.PUT, "/api/posts/*/comments/**").permitAll() // 🔥 댓글 수정 공개
-                        .requestMatchers(HttpMethod.DELETE, "/api/posts/*/comments/**").permitAll() // 🔥 댓글 삭제 공개
+                        .requestMatchers(HttpMethod.POST, "/api/posts/*/comments").permitAll() 
+                        .requestMatchers(HttpMethod.PUT, "/api/posts/*/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/*/comments/**").permitAll() 
                         .requestMatchers("/api/comments/**").permitAll()
 
-                        // ===========================================
                         // 임시저장 관련 API
-                        // ===========================================
-                        .requestMatchers(HttpMethod.PUT, "/api/temp-posts").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/temp-posts").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/temp-posts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/temp-posts").permitAll()
 
-                        // ===========================================
-                        // 🧩 퀴즈 관련 API
-                        // ===========================================
+
+                        // 퀴즈 관련 API
                         .requestMatchers(HttpMethod.GET, "/api/quiz/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/quiz").permitAll()
 
                         // 퀴즈 생성, 수정, 삭제, 답안 제출은 인증 필요
-                        .requestMatchers(HttpMethod.POST, "/api/quiz").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/quiz/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/quiz/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/quiz/submit").authenticated()
-                        .requestMatchers("/api/quiz/my-quizzes").authenticated()
-                        .requestMatchers("/api/quiz/my-results").authenticated()
-                        .requestMatchers("/api/quiz/unsolved").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/quiz").permitAll()
 
-                        // ===========================================
-                        // 📊 통계 관련 API
-                        // ===========================================
+                        .requestMatchers(HttpMethod.PUT, "/api/quiz/**").permitAll()
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/quiz/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/quiz/submit").permitAll()
+
+                        .requestMatchers("/api/quiz/my-quizzes").permitAll()
+
+                        .requestMatchers("/api/quiz/my-results").permitAll()
+
+                        .requestMatchers("/api/quiz/unsolved").permitAll()
+
+
+                        // 통계 관련 API
                         .requestMatchers(HttpMethod.GET, "/api/stats/global").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/stats/leaderboard/**").permitAll()
-                        .requestMatchers("/api/stats/me").authenticated()
+                        .requestMatchers("/api/stats/me").permitAll()
+
 
                         // 나머지는 인증 필요
                         .anyRequest().authenticated())
