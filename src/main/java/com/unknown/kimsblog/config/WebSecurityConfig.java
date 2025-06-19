@@ -89,6 +89,10 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/posts/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/posts/**").authenticated()
 
+                        // 임시저장 관련 API
+                        .requestMatchers("/api/temp-posts").authenticated()
+                        .requestMatchers("/api/temp-posts/**").authenticated()  
+
                         // ===========================================
                         // 💬 댓글 관련 API (모든 작업 공개)
                         // ===========================================
