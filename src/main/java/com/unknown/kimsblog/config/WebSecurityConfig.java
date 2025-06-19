@@ -70,12 +70,9 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
 
                         // 게시글 작성/수정/삭제는 ADMIN만
-                        .requestMatchers(HttpMethod.POST, "/api/posts").permitAll()
-
-                        .requestMatchers(HttpMethod.PUT, "/api/posts/**").permitAll()
-
-                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").permitAll()
-
+                        .requestMatchers(HttpMethod.POST, "/api/posts").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/posts/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").hasRole("ADMIN")
 
                         // 댓글 관련 API
                         .requestMatchers(HttpMethod.GET, "/api/posts/*/comments").permitAll()
@@ -86,35 +83,26 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/comments/**").permitAll()
 
                         // 임시저장 관련 API
-                        .requestMatchers(HttpMethod.PUT, "/api/temp-posts").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/temp-posts").permitAll()
-
+                        .requestMatchers(HttpMethod.PUT, "/api/temp-posts").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/temp-posts").hasRole("ADMIN")
 
                         // 퀴즈 관련 API
                         .requestMatchers(HttpMethod.GET, "/api/quiz/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/quiz").permitAll()
 
                         // 퀴즈 생성, 수정, 삭제, 답안 제출은 인증 필요
-                        .requestMatchers(HttpMethod.POST, "/api/quiz").permitAll()
-
-                        .requestMatchers(HttpMethod.PUT, "/api/quiz/**").permitAll()
-
-                        .requestMatchers(HttpMethod.DELETE, "/api/quiz/**").permitAll()
-
-                        .requestMatchers(HttpMethod.POST, "/api/quiz/submit").permitAll()
-
-                        .requestMatchers("/api/quiz/my-quizzes").permitAll()
-
-                        .requestMatchers("/api/quiz/my-results").permitAll()
-
-                        .requestMatchers("/api/quiz/unsolved").permitAll()
-
+                        .requestMatchers(HttpMethod.POST, "/api/quiz").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/quiz/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/quiz/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/quiz/submit").authenticated()
+                        .requestMatchers("/api/quiz/my-quizzes").authenticated()
+                        .requestMatchers("/api/quiz/my-results").authenticated()
+                        .requestMatchers("/api/quiz/unsolved").authenticated()
 
                         // 통계 관련 API
                         .requestMatchers(HttpMethod.GET, "/api/stats/global").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/stats/leaderboard/**").permitAll()
-                        .requestMatchers("/api/stats/me").permitAll()
-
+                        .requestMatchers("/api/stats/me").authenticated()
 
                         // 나머지는 인증 필요
                         .anyRequest().authenticated())
@@ -213,6 +201,6 @@ public class WebSecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
+        return new BCryptPasswordEncoder();
     }
 }
