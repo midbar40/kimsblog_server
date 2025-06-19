@@ -4,8 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.unknown.kimsblog.model.TemporaryPost;
 import com.unknown.kimsblog.service.TemporaryPostService;
-
-import java.util.List;
 import java.util.Optional;
 
 @RestController

@@ -2,6 +2,8 @@ package com.unknown.kimsblog.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,6 +36,7 @@ public class User implements UserDetails {
     private String role;
 
     @Column(name = "created_at", insertable = false, updatable = false) // ✨ DB에 있는 `created_at` 컬럼과 매핑
+    @CreationTimestamp  
     private LocalDateTime createdAt;
 
     @Builder
@@ -46,6 +49,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        System.out.println("🔥 User.getAuthorities() called - role: " + this.role);
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
     }
 

@@ -52,9 +52,8 @@ public class WebSecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // ===========================================
-                        // 🚨 공개 API - 인증 없이 접근 가능
-                        // ===========================================
+                        // OPTIONS 요청 (CORS preflight) - 최우선
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // 디버그 및 헬스체크
                         .requestMatchers("/api/debug/**").permitAll()
@@ -77,28 +76,32 @@ public class WebSecurityConfig {
                         .requestMatchers("/forgot-password", "/reset-password").permitAll()
 
                         // ===========================================
-                        // 📝 게시글 관련 API - 구체적인 경로부터
+                        // 📝 게시글 관련 API
                         // ===========================================
-                        .requestMatchers(HttpMethod.GET, "/api/posts/paged").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/paged").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
 
-                        // 게시글 작성/수정/삭제는 인증 필요
-                        .requestMatchers(HttpMethod.POST, "/api/posts").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/posts/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/posts/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").authenticated()
-
-                        // 임시저장 관련 API
-                        .requestMatchers("/api/temp-posts").authenticated()
-                        .requestMatchers("/api/temp-posts/**").authenticated()  
+                        // 게시글 작성/수정/삭제는 ADMIN만
+                        .requestMatchers(HttpMethod.POST, "/api/posts").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/posts/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").hasRole("ADMIN")
 
                         // ===========================================
-                        // 💬 댓글 관련 API (모든 작업 공개)
+                        // 💬 댓글 관련 API - 🔥 모든 요청 공개로 변경
                         // ===========================================
-                        .requestMatchers("/api/posts/*/comments").permitAll()
-                        .requestMatchers("/api/posts/*/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/*/comments").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/*/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/posts/*/comments").permitAll() // 🔥 댓글 작성 공개
+                        .requestMatchers(HttpMethod.PUT, "/api/posts/*/comments/**").permitAll() // 🔥 댓글 수정 공개
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/*/comments/**").permitAll() // 🔥 댓글 삭제 공개
                         .requestMatchers("/api/comments/**").permitAll()
+
+                        // ===========================================
+                        // 임시저장 관련 API
+                        // ===========================================
+                        .requestMatchers(HttpMethod.PUT, "/api/temp-posts").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/temp-posts").hasRole("ADMIN")
 
                         // ===========================================
                         // 🧩 퀴즈 관련 API
@@ -166,7 +169,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {  
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
         // 🎯 하드코딩된 허용 URL들 (환경변수 의존성 제거)
