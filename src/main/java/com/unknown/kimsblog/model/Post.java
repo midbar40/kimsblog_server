@@ -18,6 +18,7 @@ public class Post {
     @Setter
     private String title;
     @Setter
+    @Column(columnDefinition = "TEXT") // ✨ 긴 텍스트를 저장하기 위해 TEXT 타입으로 설정
     private String content;
 
     @Column(name = "created_at", insertable = false, updatable = false, nullable = false) // ✨ DB에 있는 `created_at` 컬럼과 매핑
