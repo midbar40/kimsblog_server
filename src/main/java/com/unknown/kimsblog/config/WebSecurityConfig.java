@@ -55,6 +55,9 @@ public class WebSecurityConfig {
                         // OPTIONS 요청 (CORS preflight) - 최우선
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                        // Health 체크 엔드포인트
+                        .requestMatchers("/", "/health").permitAll()  // 이 줄 확인!
+                        
                         // 인증 관련 API
                         .requestMatchers("/api/login", "/api/signup").permitAll()
                         .requestMatchers("/api/auth/status").permitAll()
