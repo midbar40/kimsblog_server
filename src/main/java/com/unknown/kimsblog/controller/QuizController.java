@@ -4,7 +4,7 @@ package com.unknown.kimsblog.controller;
 import com.unknown.kimsblog.dto.*;
 import com.unknown.kimsblog.model.User;
 import com.unknown.kimsblog.service.QuizService;
-import com.unknown.kimsblog.service.UserStatsService;
+// import com.unknown.kimsblog.service.UserStatsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class QuizController {
 
     private final QuizService quizService;
-    private final UserStatsService userStatsService;
+    // private final UserStatsService userStatsService;
 
     // 퀴즈 생성
     @PostMapping
